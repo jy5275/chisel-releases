@@ -26,3 +26,22 @@ release branch and land it via a PR into `canonical/chisel-releases`:
 
 When adding a new slice, you must invoke the `write-slice` skill (from
 the `chisel-releases` skill). Do not author or commit an SDF by hand.
+
+# AGENTS.md on feat/release branches
+
+This file is tracked only on the fork's `main` branch (so it is
+version-controlled and syncs across machines via git push/pull). To make
+it visible to agents on feat/release branches -- whose trees must stay
+identical to upstream `canonical/chisel-releases` -- a per-repo
+`post-checkout` hook materializes it into the working tree as an
+**untracked** file whenever you switch to a branch whose tree lacks it.
+Because it is untracked on those branches, it never leaks into upstream
+release-branch PRs.
+
+Install the hook once per fresh clone:
+
+    bash scripts/install-agents-hook.sh
+
+To update AGENTS.md: edit it on `main`, commit and push, then on any
+other branch `rm AGENTS.md && git checkout <same-branch>` to let the
+hook refresh it from the latest `main`.
